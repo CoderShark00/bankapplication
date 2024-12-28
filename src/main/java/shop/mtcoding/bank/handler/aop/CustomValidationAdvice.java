@@ -16,6 +16,10 @@ import shop.mtcoding.bank.handler.ex.CustomValidationException;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * Validation Aspect Oriented Programming
+ */
 @Component
 @Aspect
 public class CustomValidationAdvice {
@@ -31,6 +35,7 @@ public class CustomValidationAdvice {
 
     }
 
+    // Body값이 있는 곳만 validation이 적용되면 된다.
     @Around("postMapping() || putMapping()") // joinPoint의 전후 제어
     public Object validationAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs(); // joinPoint의 매개변수

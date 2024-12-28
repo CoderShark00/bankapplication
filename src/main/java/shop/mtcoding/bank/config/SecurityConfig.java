@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -15,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import shop.mtcoding.bank.config.jwt.JwtAuthenticationFilter;
+import shop.mtcoding.bank.config.jwt.JwtAuthorizationFilter;
 import shop.mtcoding.bank.domain.user.UserEnum;
 import shop.mtcoding.bank.dto.ResponseDto;
 import shop.mtcoding.bank.util.CustomResponseUtil;
@@ -22,6 +26,7 @@ import shop.mtcoding.bank.util.CustomResponseUtil;
 
 @Configuration
 public class SecurityConfig {
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Bean // Ioc 컨테이너에 BCruptPasswordEncoder() 객체가 등록됨.
@@ -29,7 +34,20 @@ public class SecurityConfig {
         log.debug("디버그 : BCryptPasswordEncoder 빈 등록됨.");
         return new BCryptPasswordEncoder();
     }
+
     // JWT 필터 등록이 필요함.
+    public class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity>{
+        @Override
+        public void configure(HttpSecurity builder) throws Exception {
+            AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
+            builder.addFilter(new JwtAuthenticationFilter(authenticationManager));
+            builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
+            super.configure(builder);
+        }
+        public HttpSecurity build(){
+            return getBuilder();
+        }
+    }
 
 
     // JWT 서버를 만들거라 Session은 사용 안할거임
@@ -47,10 +65,18 @@ public class SecurityConfig {
         // httpBasic은 브라우저가 팝업창을 이용해서 사용자 인증을 진행한다.
         http.httpBasic(AbstractHttpConfigurer::disable);
 
-        // Exception 가로채기
+        // 필터 적용
+        http.with(new CustomSecurityFilterManager(), CustomSecurityFilterManager::build);
+
+        // 인증실패
         http.exceptionHandling(e->e.authenticationEntryPoint(
                 (request, response, exception) -> {
-                    CustomResponseUtil.unAuthentication(response, "로그인을 진행해 주세요");
+                    CustomResponseUtil.fail(response, "로그인을 진행해 주세요", HttpStatus.UNAUTHORIZED);
+                }));
+        // 권한실패
+        http.exceptionHandling(e->e.accessDeniedHandler(
+                (request, response, accessDeniedException) ->{
+                CustomResponseUtil.fail(response, "권한이 없습니다.", HttpStatus.FORBIDDEN);
                 }));
 
         http.authorizeHttpRequests(c-> c.requestMatchers("/api/s/**").authenticated()

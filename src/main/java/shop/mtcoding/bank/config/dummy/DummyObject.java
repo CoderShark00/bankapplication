@@ -2,6 +2,7 @@ package shop.mtcoding.bank.config.dummy;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import shop.mtcoding.bank.domain.user.User;
+import shop.mtcoding.bank.domain.user.UserEnum;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ public class DummyObject {
                 .password(encPassword)
                 .email(username+"@nate.com")
                 .fullname(fullname)
+                .role(UserEnum.CUSTOMER)
                 .build();
     }
 
@@ -32,6 +34,7 @@ public class DummyObject {
                 .password(encPassword)
                 .email(username+"@nate.com")
                 .fullname(fullname)
+                .role(UserEnum.CUSTOMER)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
