@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 import shop.mtcoding.bank.config.dummy.DummyObject;
 import shop.mtcoding.bank.domain.user.UserRepository;
 import shop.mtcoding.bank.dto.user.UserReqDto;
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
+@Transactional
 class UserControllerTest extends DummyObject {
 
     @Autowired
@@ -70,12 +72,14 @@ class UserControllerTest extends DummyObject {
 
         String requestBody = om.writeValueAsString(joinReqDto); // JSON으로 변경
 //        System.out.println("테스트 : " + requestBody);
+
         //when
         ResultActions resultActions = mvc.perform(post("/api/join")
                 .content(requestBody)
                 .contentType(MediaType.APPLICATION_JSON)); // Body 값이 있으면 Body값을 설명하는 MediaType이 꼭 필요
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : " + responseBody);
+
         //then
         resultActions.andExpect(status().isBadRequest());
 
