@@ -1,11 +1,12 @@
 package shop.mtcoding.bank.temp;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.regex.Pattern;
 
 import static org.springframework.security.config.http.MatcherType.regex;
-
+@ActiveProfiles("test")
 public class RegexTest {
 
     @Test

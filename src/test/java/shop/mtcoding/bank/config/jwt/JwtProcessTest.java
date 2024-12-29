@@ -2,13 +2,14 @@ package shop.mtcoding.bank.config.jwt;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 import shop.mtcoding.bank.config.auth.LoginUser;
 import shop.mtcoding.bank.domain.user.User;
 import shop.mtcoding.bank.domain.user.UserEnum;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-
+@ActiveProfiles("test")
 class JwtProcessTest {
 
 
