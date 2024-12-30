@@ -2,6 +2,8 @@ package shop.mtcoding.bank.domain.account;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,5 +58,27 @@ public class Account {
         if(!user.getId().equals(userId)){ // Lazy 로딩이어도 id를 조회할 때는 select 쿼리가 날라가지 않는다.
             throw new CustomApiException("계좌 소유자가 아닙니다.");
         }
+    }
+
+    public void deposit(Long amount) {
+        balance = balance + amount;
+    }
+
+    public void checkSamePassword(Long password) {
+        if(!password.equals(this.password)){
+            throw new CustomApiException("계좌 비밀번호 검증에 실패했습니다.");
+        }
+
+    }
+
+    public void checkBalance(Long amount) {
+        if(this.balance < amount){
+            throw new CustomApiException("계좌 잔액이 부족합니다.");
+        }
+    }
+
+    public void withdraw(Long amount) {
+        checkBalance(amount);
+        balance = balance - amount;
     }
 }

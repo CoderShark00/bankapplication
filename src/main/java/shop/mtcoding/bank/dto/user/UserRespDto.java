@@ -1,8 +1,11 @@
 package shop.mtcoding.bank.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import shop.mtcoding.bank.domain.account.Account;
+import shop.mtcoding.bank.domain.transaction.Transaction;
 import shop.mtcoding.bank.domain.user.User;
 import shop.mtcoding.bank.util.CustomDateUtil;
 
@@ -38,4 +41,6 @@ public class UserRespDto {
             this.fullname = user.getFullname();
         }
     }
+
+
 }

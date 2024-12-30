@@ -1,9 +1,6 @@
 package shop.mtcoding.bank.dto.user;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,5 +48,20 @@ public class UserReqDto {
                     .role(UserEnum.CUSTOMER)
                     .build();
         }
+    }
+
+    @Getter @Setter
+    public static class AccountDepositReqDto{
+        @NotNull
+        @Digits(integer = 4, fraction = 4)
+        private Long number;
+        @NotNull
+        private Long amount;
+        @NotEmpty
+        @Pattern(regexp = "^(DEPOSIT)$")
+        private String gubun; // DEPOSIT
+        @NotEmpty
+        @Pattern(regexp = "^[0-9]{3}[0-9]{4}[0-9]{4}")
+        private String tel;
     }
 }
