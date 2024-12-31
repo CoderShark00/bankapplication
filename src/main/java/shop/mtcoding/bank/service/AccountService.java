@@ -205,4 +205,18 @@ public class AccountService {
         // DTO 응답
         return new AccountTransferRespDto(withdrawAccountPS, transactionPS);
     }
+
+    public AccountDetailRespDto 계좌상세보기(Long number,Long userId, Integer page) {
+        // 1. gubun, 페이징 고정
+        String gubun = "ALL";
+
+        Account accountPS = accountRepository.findByNumber(number).orElseThrow(
+                ()-> new CustomApiException("게좌를 찾을 수 없습니다.")
+        );
+
+        accountPS.checkOwner(userId);
+
+        List<Transaction> transactionList = transactionRepository.findTransactionList(accountPS.getId(),gubun, page);
+        return new AccountDetailRespDto(accountPS, transactionList);
+    }
 }
